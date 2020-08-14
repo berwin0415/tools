@@ -1,7 +1,7 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isObject = exports.isNumber = exports.isString = exports.isArray = void 0;
+exports.isFunction = exports.isObject = exports.isNumber = exports.isString = exports.isArray = void 0;
 var toString = Object.prototype.toString;
 exports.isArray = function (target) {
     return Array.isArray
@@ -16,4 +16,7 @@ exports.isNumber = function (target) {
 };
 exports.isObject = function (target) {
     return toString.call(target) === "[object Object]";
+};
+exports.isFunction = function (target) {
+    return typeof target === "function";
 };

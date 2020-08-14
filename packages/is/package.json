@@ -39,5 +39,8 @@
     "rollup": "^2.23.0",
     "tslib": "^2.0.0",
     "typescript": "^3.9.7"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

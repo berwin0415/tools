@@ -1,4 +1,4 @@
-import { IsArray, IsString, IsNumber, IsObject } from "../types";
+import { IsArray, IsString, IsNumber, IsObject, IsFunction } from "../types";
 
 const toString = Object.prototype.toString;
 
@@ -15,3 +15,6 @@ export const isNumber: IsNumber = (target): target is number =>
 
 export const isObject: IsObject = (target): target is object =>
   toString.call(target) === "[object Object]";
+
+export const isFunction: IsFunction = (target): target is object =>
+  typeof target === "function";
