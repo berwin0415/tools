@@ -1,20 +1,18 @@
-import { IsArray, IsString, IsNumber, IsObject, IsFunction } from "../types";
-
 const toString = Object.prototype.toString;
 
-export const isArray: IsArray = <T = any>(target: unknown): target is T[] =>
+export const isArray = <T = any>(target: unknown): target is T[] =>
   Array.isArray
     ? Array.isArray(target)
     : toString.call(target) === "[object Array]";
 
-export const isString: IsString = (target): target is string =>
+export const isString = (target: unknown): target is string =>
   typeof target === "string";
 
-export const isNumber: IsNumber = (target): target is number =>
-  typeof target === "number" && !isNaN(target);
+export const isNumber = (target: unknown): target is number =>
+  typeof target === "number" && !Number.isNaN(target);
 
-export const isObject: IsObject = (target): target is object =>
+export const isObject = (target: unknown): target is object =>
   toString.call(target) === "[object Object]";
 
-export const isFunction: IsFunction = (target): target is object =>
+export const isFunction = (target: unknown): target is object =>
   typeof target === "function";
