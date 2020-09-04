@@ -5,6 +5,7 @@
 }(this, (function (exports) { 'use strict';
 
   var toString = Object.prototype.toString;
+  var isNull = function (target) { return target === null; };
   var isArray = function (target) {
       return Array.isArray
           ? Array.isArray(target)
@@ -22,12 +23,28 @@
   var isFunction = function (target) {
       return typeof target === "function";
   };
+  var isValideJson = function (target) {
+      if (isString(target)) {
+          try {
+              JSON.stringify(JSON.parse(target));
+              return true;
+          }
+          catch (error) {
+              return false;
+          }
+      }
+      else {
+          return false;
+      }
+  };
 
   exports.isArray = isArray;
   exports.isFunction = isFunction;
+  exports.isNull = isNull;
   exports.isNumber = isNumber;
   exports.isObject = isObject;
   exports.isString = isString;
+  exports.isValideJson = isValideJson;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
