@@ -83,7 +83,11 @@ export default class Transfer {
         if (model.typeList) {
           findTsModel(
             model.typeList,
-            model.type === "array" ? prevName : (prevName ? (prevName + firstToUpper(model.name)): model.name)
+            model.type === "array"
+              ? prevName
+              : prevName
+              ? prevName + firstToUpper(model.name)
+              : model.name
           );
         }
         if (model.type === "tsType") {
@@ -100,14 +104,15 @@ export default class Transfer {
           ? firstToUpper(prevName) + firstToUpper(name)
           : firstToUpper(name);
         let codeStr = getResultHeader(camelName);
-        typeList.forEach((type: any) => {
+        typeList.forEach((type: TsModel) => {
           if (type.type === "array") {
             codeStr += `  ${type.name}?: ${
-              firstToUpper(name) + firstToUpper(type.name)
+              firstToUpper(camelName) + firstToUpper(type.name)
             }[]\n`;
+            // console.log(type, name,camelName,codeStr);
           } else if (type.type === "tsType") {
             codeStr += `  ${type.name}?: ${
-              firstToUpper(type.prevName) + firstToUpper(type.name)
+              firstToUpper(type.prevName || "") + firstToUpper(type.name)
             }\n`;
           } else {
             codeStr += `  ${type.name}?: ${type.type}\n`;
