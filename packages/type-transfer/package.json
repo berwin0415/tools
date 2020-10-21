@@ -1,6 +1,6 @@
 {
   "name": "@battles/type-transfer",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "",
   "types": "dist/types/index.d.ts",
   "main": "dist/transfer.cjs.js",
@@ -49,6 +49,6 @@
     ]
   },
   "dependencies": {
-    "@battles/is": "^1.2.0"
+    "@battles/is": "^1.2.1"
   }
 }
