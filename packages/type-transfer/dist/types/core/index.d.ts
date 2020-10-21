@@ -11,7 +11,7 @@ export default class Transfer {
     private jsonStr;
     constructor(jsonStr: string, options?: Partial<TransferOptions>);
     parse(): string;
-    getTypeList(obj: unknown, modelName: string): TsModel[];
+    getTypeList(obj: unknown, modelName: string, prevName?: string): TsModel[];
     getTsModels(typeList: TsModel[]): string;
 }
 export {};

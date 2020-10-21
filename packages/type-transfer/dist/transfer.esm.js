@@ -17,6 +17,9 @@ var formatJson = function (str) {
 var defaultOption = {
     modelName: "tsModel",
 };
+var getResultHeader = function (name) {
+    return "/* " + name + " */\nexport interface " + name + "{\n";
+};
 var Transfer = /** @class */ (function () {
     function Transfer(jsonStr, options) {
         if (isValideJson(jsonStr)) {
@@ -31,8 +34,7 @@ var Transfer = /** @class */ (function () {
         var modelName = this.options.modelName;
         var jsonObj = JSON.parse(this.jsonStr);
         var typeList = this.getTypeList(jsonObj, modelName);
-        // console.log(JSON.stringify(typeList));
-        return this.getTsModels(typeList);
+        return this.getTsModels(typeList, modelName);
     };
     Transfer.prototype.getTypeList = function (obj, modelName) {
         var _this = this;
@@ -72,42 +74,42 @@ var Transfer = /** @class */ (function () {
         }
         return modelList;
     };
-    Transfer.prototype.getTsModels = function (typeList) {
+    Transfer.prototype.getTsModels = function (typeList, modelName) {
         var queque = [];
-        var findTsModel = function (typeList) {
+        var findTsModel = function (typeList, prevName) {
             typeList.forEach(function (model) {
                 if (model.typeList) {
-                    findTsModel(model.typeList);
+                    findTsModel(model.typeList, model.type === "array" ? prevName : (prevName ? (prevName + firstToUpper(model.name)) : model.name));
                 }
                 if (model.type === "tsType") {
+                    prevName && (model.prevName = prevName);
                     queque.push(model);
                 }
             });
         };
         findTsModel(typeList);
-        return queque.map(function (model) {
-            var name = model.name, type = model.type, _a = model.typeList, typeList = _a === void 0 ? [] : _a;
-            var camelName = firstToUpper(name);
-            var codeStr = "/* " + camelName + " */\n";
-            codeStr += "export " + (type === "array"
-                ? "type = " + camelName + "[]\n"
-                : "interface " + camelName + "{\n");
-            if (type === "array")
-                return codeStr;
+        return queque
+            .map(function (model) {
+            var name = model.name, prevName = model.prevName, type = model.type, _a = model.typeList, typeList = _a === void 0 ? [] : _a;
+            var camelName = prevName
+                ? firstToUpper(prevName) + firstToUpper(name)
+                : firstToUpper(name);
+            var codeStr = getResultHeader(camelName);
             typeList.forEach(function (type) {
                 if (type.type === "array") {
-                    codeStr += "  " + type.name + ": " + firstToUpper(type.name) + "[]\n";
+                    codeStr += "  " + type.name + "?: " + (firstToUpper(name) + firstToUpper(type.name)) + "[]\n";
                 }
                 else if (type.type === "tsType") {
-                    codeStr += "  " + type.name + ": " + firstToUpper(type.name) + "\n";
+                    codeStr += "  " + type.name + "?: " + (firstToUpper(type.prevName) + firstToUpper(type.name)) + "\n";
                 }
                 else {
-                    codeStr += "  " + type.name + ": " + type.type + "\n";
+                    codeStr += "  " + type.name + "?: " + type.type + "\n";
                 }
             });
-            codeStr += "}\n";
+            codeStr += "}\n\n";
             return codeStr;
-        }).join('');
+        })
+            .join("");
     };
     return Transfer;
 }());

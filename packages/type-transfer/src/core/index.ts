@@ -7,13 +7,18 @@ export interface TransferOptions {
 
 interface TsModel {
   name: string; // 参数名
+  prevName?: string;
   type: string;
+  subType?: string;
   typeList?: TsModel[]; // 类属性列表
 }
 
 const defaultOption: TransferOptions = {
   modelName: "tsModel",
 };
+
+const getResultHeader = (name: string) =>
+  `/* ${name} */\nexport interface ${name}{\n`;
 
 export default class Transfer {
   private options: TransferOptions;
@@ -31,8 +36,7 @@ export default class Transfer {
     const { modelName } = this.options;
     const jsonObj = JSON.parse(this.jsonStr);
     const typeList = this.getTypeList(jsonObj, modelName);
-    // console.log(JSON.stringify(typeList));
-    return this.getTsModels(typeList);
+    return this.getTsModels(typeList, modelName);
   }
 
   getTypeList(obj: unknown, modelName: string): TsModel[] {
@@ -72,41 +76,46 @@ export default class Transfer {
     return modelList;
   }
 
-  getTsModels(typeList: TsModel[]): string {
+  getTsModels(typeList: TsModel[], modelName: string): string {
     const queque: any[] = [];
-    const findTsModel = (typeList: TsModel[]): void => {
+    const findTsModel = (typeList: TsModel[], prevName?: string): void => {
       typeList.forEach((model) => {
         if (model.typeList) {
-          findTsModel(model.typeList);
+          findTsModel(
+            model.typeList,
+            model.type === "array" ? prevName : (prevName ? (prevName + firstToUpper(model.name)): model.name)
+          );
         }
         if (model.type === "tsType") {
+          prevName && (model.prevName = prevName);
           queque.push(model);
         }
       });
     };
     findTsModel(typeList);
-      return queque.map((model) => {
-        const { name, type, typeList = [] } = model;
-        const camelName = firstToUpper(name);
-        let codeStr = `/* ${camelName} */\n`;
-        codeStr += `export ${
-          type === "array"
-            ? `type = ${camelName}[]\n`
-            : `interface ${camelName}{\n`
-        }`;
-        if (type === "array") return codeStr;
+    return queque
+      .map((model) => {
+        const { name, prevName, type, typeList = [] } = model;
+        const camelName = prevName
+          ? firstToUpper(prevName) + firstToUpper(name)
+          : firstToUpper(name);
+        let codeStr = getResultHeader(camelName);
         typeList.forEach((type: any) => {
           if (type.type === "array") {
-            codeStr += `  ${type.name}: ${firstToUpper(type.name)}[]\n`;
+            codeStr += `  ${type.name}?: ${
+              firstToUpper(name) + firstToUpper(type.name)
+            }[]\n`;
           } else if (type.type === "tsType") {
-            codeStr += `  ${type.name}: ${firstToUpper(type.name)}\n`;
+            codeStr += `  ${type.name}?: ${
+              firstToUpper(type.prevName) + firstToUpper(type.name)
+            }\n`;
           } else {
-            codeStr += `  ${type.name}: ${type.type}\n`;
+            codeStr += `  ${type.name}?: ${type.type}\n`;
           }
         });
-        codeStr += "}\n";
+        codeStr += "}\n\n";
         return codeStr;
-      }).join('')
-    
+      })
+      .join("");
   }
 }
