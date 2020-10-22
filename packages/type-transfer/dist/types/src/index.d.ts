@@ -1,3 +1,2 @@
-import { TransferOptions } from "./core/index";
-declare const create: (jsonStr: string, options?: TransferOptions | undefined) => string;
+declare const create: (jsonStr: string) => string;
 export default create;

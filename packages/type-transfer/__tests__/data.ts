@@ -14,7 +14,6 @@ export interface TsModel{
   a?: TsModelA[]
   a2?: null
 }
-
 `;
 
 export const transferJson_2 = JSON.stringify({
@@ -26,13 +25,13 @@ export const transferJson_2 = JSON.stringify({
   },
 });
 
-export const transferType_2 = `/* TsModelDataGoodsList */
-export interface TsModelDataGoodsList{
+export const transferType_2 = `/* TsModelDataUserInfo */
+export interface TsModelDataUserInfo{
   id?: string
 }
 
-/* TsModelDataUserInfo */
-export interface TsModelDataUserInfo{
+/* TsModelDataGoodsList */
+export interface TsModelDataGoodsList{
   id?: string
 }
 
@@ -48,5 +47,4 @@ export interface TsModel{
   message?: null
   data?: TsModelData
 }
-
 `;

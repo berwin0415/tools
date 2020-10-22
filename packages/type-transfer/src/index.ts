@@ -1,6 +1,6 @@
-import Transfer, { TransferOptions } from "./core/index";
-const create = (jsonStr: string, options?: TransferOptions) => {
-  const transfer = new Transfer(jsonStr, options);
-  return transfer.parse();
+import Transfer from "./core/index";
+const create = (jsonStr: string, modelName?: string) => {
+  const transfer = new Transfer(jsonStr);
+  return transfer.parse(modelName);
 };
 export default create;
