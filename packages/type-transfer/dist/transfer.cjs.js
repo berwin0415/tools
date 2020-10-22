@@ -50,7 +50,7 @@ function __spreadArrays() {
     return r;
 }
 
-var defaultConfig = {
+var configuration = {
     modelName: "tsModel",
 };
 
@@ -72,7 +72,7 @@ var resolveArrayType = function (arr) {
     return [];
 };
 var createNodeTree = function (target, name) {
-    if (name === void 0) { name = defaultConfig.modelName; }
+    if (name === void 0) { name = configuration.modelName; }
     if (is.isArray(target)) {
         return createNode(name, "array", target.map(function (ele, i) { return createNodeTree(ele, name + i); }));
     }
@@ -174,7 +174,7 @@ var Transfer = /** @class */ (function () {
     }
     Transfer.prototype.parse = function (name) {
         var jsonObj = JSON.parse(this.jsonStr);
-        var nodeTree = createNodeTree(jsonObj, name || defaultConfig.modelName);
+        var nodeTree = createNodeTree(jsonObj, name || configuration.modelName);
         var modelList = createModelList(nodeTree);
         var typeString = generateTypeString(modelList);
         return typeString;
@@ -182,9 +182,9 @@ var Transfer = /** @class */ (function () {
     return Transfer;
 }());
 
-var create = function (jsonStr) {
+var create = function (jsonStr, modelName) {
     var transfer = new Transfer(jsonStr);
-    return transfer.parse();
+    return transfer.parse(modelName);
 };
 
 module.exports = create;
