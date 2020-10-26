@@ -48,3 +48,51 @@ export interface TsModel{
   data?: TsModelData
 }
 `;
+
+export const transferJson_3 = JSON.stringify({
+  message: null,
+  data: {
+    latestPhoneNum: "1",
+    goodsList: [{ createdBy: "12", goodsId: "132" }],
+    couponList: [],
+    energyNum: 0,
+    carouselImageUrlList: [
+      {
+        imageUrl: "xxxxxx",
+        imageSort: '1',
+      },
+      {
+        imageUrl: "xxxxxx",
+        imageSort: '2',
+      },
+    ],
+  },
+});
+
+export const transferType_3 = `/* TsModelDataCarouselImageUrlList */
+export interface TsModelDataCarouselImageUrlList{
+  imageUrl?: string
+  imageSort?: string
+}
+
+/* TsModelDataGoodsList */
+export interface TsModelDataGoodsList{
+  createdBy?: string
+  goodsId?: string
+}
+
+/* TsModelData */
+export interface TsModelData{
+  latestPhoneNum?: string
+  goodsList?: TsModelDataGoodsList[]
+  couponList?: []
+  energyNum?: number
+  carouselImageUrlList?: TsModelDataCarouselImageUrlList[]
+}
+
+/* TsModel */
+export interface TsModel{
+  message?: null
+  data?: TsModelData
+}
+`;

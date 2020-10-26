@@ -8,4 +8,7 @@ describe("main test", () => {
   test("test2: level3 ", () => {
     expect(transfer(data.transferJson_2)).toEqual(data.transferType_2);
   });
+  test("test3: level3 ", () => {
+    expect(transfer(data.transferJson_3)).toEqual(data.transferType_3);
+  });
 });

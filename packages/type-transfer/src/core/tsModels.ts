@@ -21,9 +21,22 @@ const createNode = (
 };
 
 const resolveArrayType = (arr: ModelNode[]): ModelNode[] => {
-  if (arr.length === 1) {
-    return arr[0].children || [];
-  } else if (arr.length > 1) {
+  if (arr.length) {
+    if (arr.every((ele) => ele.type === "tsModel")) {
+      const temp = new Set();
+      const typeList: ModelNode[] = [];
+      arr.forEach((ele) => {
+        ele.children?.forEach((item) => {
+          if (!temp.has(item.name)) {
+            temp.add(item.name);
+            typeList.push(item);
+          }
+        });
+      });
+      return [{ name: "0", type: "tsModel", children: typeList }];
+    }
+    const arrWithoutName = arr.map((item) => ({ ...item, name: "" }));
+
     return arr;
   }
   return [];
@@ -71,33 +84,40 @@ export const createModelList = (tree: ModelNode) => {
   const queue: ModelQueueNode[] = [root];
   while (queue.length) {
     const node = queue.shift();
-
+    console.log(list);
     if (node?.type === "tsModel") {
       node.children?.forEach((child) => {
         const path = [...node.path, node.name];
         queue.push({ ...child, path });
       });
-      list.unshift({
-        name: node.name,
-        type: node.type,
-        path: node.path,
-        typeList: node.children || [],
-      });
+      if (node.children && node.children.length) {
+        list.unshift({
+          name: node.name,
+          type: node.type,
+          path: node.path,
+          typeList: node.children || [],
+        });
+      }
     } else if (node?.type === "array") {
       const arrayTypeList = resolveArrayType(node.children || []);
 
-      if ((node?.children || []).length > 1) {
+      if (arrayTypeList.length > 1) {
         node.children?.forEach((child) => {
           const path = [...node.path, node.name];
           queue.push({ ...child, path });
         });
       }
-      list.unshift({
-        name: node.name,
-        type: node.type,
-        path: node.path,
-        typeList: arrayTypeList,
-      });
+      if (node.children && node.children.length) {
+        list.unshift({
+          name: node.name,
+          type: node.type,
+          path: node.path,
+          typeList:
+            arrayTypeList.length === 1
+              ? arrayTypeList[0].children || []
+              : arrayTypeList,
+        });
+      }
     } else {
       node?.children?.forEach((child) => {
         const path = [...node.path, node.name];
@@ -105,6 +125,7 @@ export const createModelList = (tree: ModelNode) => {
       });
     }
   }
+
   return list;
 };
 
@@ -117,7 +138,7 @@ const getResultBody = (node: ModelQueueNode): string => {
       node.path.map((path) => firstToUpper(path)).join("") +
       firstToUpper(node.name);
     if (node.type === "array") {
-      typeName += "[]";
+      typeName = node.children?.length ? typeName + "[]" : "[]";
     }
   }
   return `  ${node.name}?: ${typeName}\n`;
