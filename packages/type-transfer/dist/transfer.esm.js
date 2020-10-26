@@ -61,10 +61,22 @@ var createNode = function (name, type, children) {
     };
 };
 var resolveArrayType = function (arr) {
-    if (arr.length === 1) {
-        return arr[0].children || [];
-    }
-    else if (arr.length > 1) {
+    if (arr.length) {
+        if (arr.every(function (ele) { return ele.type === "tsModel"; })) {
+            var temp_1 = new Set();
+            var typeList_1 = [];
+            arr.forEach(function (ele) {
+                var _a;
+                (_a = ele.children) === null || _a === void 0 ? void 0 : _a.forEach(function (item) {
+                    if (!temp_1.has(item.name)) {
+                        temp_1.add(item.name);
+                        typeList_1.push(item);
+                    }
+                });
+            });
+            return [{ name: "0", type: "tsModel", children: typeList_1 }];
+        }
+        var arrWithoutName = arr.map(function (item) { return (__assign(__assign({}, item), { name: "" })); });
         return arr;
     }
     return [];
@@ -92,32 +104,39 @@ var createModelList = function (tree) {
     var queue = [root];
     var _loop_1 = function () {
         var node = queue.shift();
+        console.log(list);
         if ((node === null || node === void 0 ? void 0 : node.type) === "tsModel") {
             (_a = node.children) === null || _a === void 0 ? void 0 : _a.forEach(function (child) {
                 var path = __spreadArrays(node.path, [node.name]);
                 queue.push(__assign(__assign({}, child), { path: path }));
             });
-            list.unshift({
-                name: node.name,
-                type: node.type,
-                path: node.path,
-                typeList: node.children || [],
-            });
+            if (node.children && node.children.length) {
+                list.unshift({
+                    name: node.name,
+                    type: node.type,
+                    path: node.path,
+                    typeList: node.children || [],
+                });
+            }
         }
         else if ((node === null || node === void 0 ? void 0 : node.type) === "array") {
             var arrayTypeList = resolveArrayType(node.children || []);
-            if (((node === null || node === void 0 ? void 0 : node.children) || []).length > 1) {
+            if (arrayTypeList.length > 1) {
                 (_b = node.children) === null || _b === void 0 ? void 0 : _b.forEach(function (child) {
                     var path = __spreadArrays(node.path, [node.name]);
                     queue.push(__assign(__assign({}, child), { path: path }));
                 });
             }
-            list.unshift({
-                name: node.name,
-                type: node.type,
-                path: node.path,
-                typeList: arrayTypeList,
-            });
+            if (node.children && node.children.length) {
+                list.unshift({
+                    name: node.name,
+                    type: node.type,
+                    path: node.path,
+                    typeList: arrayTypeList.length === 1
+                        ? arrayTypeList[0].children || []
+                        : arrayTypeList,
+                });
+            }
         }
         else {
             (_c = node === null || node === void 0 ? void 0 : node.children) === null || _c === void 0 ? void 0 : _c.forEach(function (child) {
@@ -135,13 +154,14 @@ var getResultHeader = function (name) {
     return "/* " + name + " */\nexport interface " + name + "{\n";
 };
 var getResultBody = function (node) {
+    var _a;
     var typeName = node.type;
     if (node.type === "tsModel" || node.type === "array") {
         typeName =
             node.path.map(function (path) { return firstToUpper(path); }).join("") +
                 firstToUpper(node.name);
         if (node.type === "array") {
-            typeName += "[]";
+            typeName = ((_a = node.children) === null || _a === void 0 ? void 0 : _a.length) ? typeName + "[]" : "[]";
         }
     }
     return "  " + node.name + "?: " + typeName + "\n";

@@ -59,11 +59,11 @@ export const transferJson_3 = JSON.stringify({
     carouselImageUrlList: [
       {
         imageUrl: "xxxxxx",
-        imageSort: '1',
+        imageSort: "1",
       },
       {
         imageUrl: "xxxxxx",
-        imageSort: '2',
+        imageSort: "2",
       },
     ],
   },
@@ -94,5 +94,52 @@ export interface TsModelData{
 export interface TsModel{
   message?: null
   data?: TsModelData
+}
+`;
+
+export const transferJson_4 = JSON.stringify({
+  message: null,
+  result: 1,
+  data: [
+    {
+      cmsTitle: "数量",
+      readRank: "0%",
+      totalReadTimes: 0,
+      readTimes: 1,
+    },
+    {
+      cmsTitle: "数量",
+      readRank: "0%",
+      totalReadTimes: 0,
+      readTimes: 1,
+    },
+    {
+      cmsTitle: "数量",
+      readRank: "0%",
+      totalReadTimes: 0,
+      readTimes: 1,
+    },
+    {
+      cmsTitle: "数量",
+      readRank: "0%",
+      totalReadTimes: 0,
+      readTimes: 1,
+    },
+  ],
+});
+
+export const transferType_4 = `/* TsModelData */
+export interface TsModelData{
+  cmsTitle?: string
+  readRank?: string
+  totalReadTimes?: number
+  readTimes?: number
+}
+
+/* TsModel */
+export interface TsModel{
+  message?: null
+  result?: number
+  data?: TsModelData[]
 }
 `;
