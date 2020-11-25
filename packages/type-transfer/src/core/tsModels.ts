@@ -35,8 +35,6 @@ const resolveArrayType = (arr: ModelNode[]): ModelNode[] => {
       });
       return [{ name: "0", type: "tsModel", children: typeList }];
     }
-    const arrWithoutName = arr.map((item) => ({ ...item, name: "" }));
-
     return arr;
   }
   return [];
@@ -82,10 +80,8 @@ export const createModelList = (tree: ModelNode) => {
   const list: ModelList = [];
   const root = { ...tree, path: [] };
   const queue: ModelQueueNode[] = [root];
-  // console.log(JSON.stringify(queue))
   while (queue.length) {
     const node = queue.shift();
-    // console.log(JSON.stringify(list, null, 4));
     if (node?.type === "tsModel") {
       node.children?.forEach((child) => {
         const path = [...node.path, node.name];
@@ -118,6 +114,11 @@ export const createModelList = (tree: ModelNode) => {
               ? arrayTypeList[0].children || []
               : arrayTypeList,
         });
+        if (arrayTypeList[0].type === "tsModel") {
+          const path = [...node.path, node.name];
+
+          queue.push({ ...arrayTypeList[0], name: "", path });
+        }
       }
     } else {
       node?.children?.forEach((child) => {
@@ -144,10 +145,15 @@ const getResultBody = (node: ModelQueueNode): string => {
   return `  ${node.name}?: ${typeName}\n`;
 };
 export const generateTypeString = (list: ModelList): string => {
+  const interfaceList: string[] = [];
   const types = list.map((item) => {
     const typeName =
       item.path.map((path) => firstToUpper(path)).join("") +
       firstToUpper(item.name);
+    if (interfaceList.includes(typeName)) {
+      return "";
+    }
+    interfaceList.push(typeName);
     return (
       getResultHeader(typeName) +
       item.typeList
@@ -158,5 +164,5 @@ export const generateTypeString = (list: ModelList): string => {
       "}\n"
     );
   });
-  return types.join("\n");
+  return types.filter((item) => item).join("\n");
 };

@@ -78,7 +78,6 @@ var resolveArrayType = function (arr) {
             });
             return [{ name: "0", type: "tsModel", children: typeList_1 }];
         }
-        var arrWithoutName = arr.map(function (item) { return (__assign(__assign({}, item), { name: "" })); });
         return arr;
     }
     return [];
@@ -106,7 +105,6 @@ var createModelList = function (tree) {
     var queue = [root];
     var _loop_1 = function () {
         var node = queue.shift();
-        // console.log(JSON.stringify(list, null, 4));
         if ((node === null || node === void 0 ? void 0 : node.type) === "tsModel") {
             (_a = node.children) === null || _a === void 0 ? void 0 : _a.forEach(function (child) {
                 var path = __spreadArrays(node.path, [node.name]);
@@ -138,6 +136,10 @@ var createModelList = function (tree) {
                         ? arrayTypeList[0].children || []
                         : arrayTypeList,
                 });
+                if (arrayTypeList[0].type === "tsModel") {
+                    var path = __spreadArrays(node.path, [node.name]);
+                    queue.push(__assign(__assign({}, arrayTypeList[0]), { name: "", path: path }));
+                }
             }
         }
         else {
@@ -147,7 +149,6 @@ var createModelList = function (tree) {
             });
         }
     };
-    // console.log(JSON.stringify(queue))
     while (queue.length) {
         _loop_1();
     }
@@ -170,9 +171,14 @@ var getResultBody = function (node) {
     return "  " + node.name + "?: " + typeName + "\n";
 };
 var generateTypeString = function (list) {
+    var interfaceList = [];
     var types = list.map(function (item) {
         var typeName = item.path.map(function (path) { return firstToUpper(path); }).join("") +
             firstToUpper(item.name);
+        if (interfaceList.includes(typeName)) {
+            return "";
+        }
+        interfaceList.push(typeName);
         return (getResultHeader(typeName) +
             item.typeList
                 .map(function (typeNode) {
@@ -181,7 +187,7 @@ var generateTypeString = function (list) {
                 .join("") +
             "}\n");
     });
-    return types.join("\n");
+    return types.filter(function (item) { return item; }).join("\n");
 };
 
 var Transfer = /** @class */ (function () {

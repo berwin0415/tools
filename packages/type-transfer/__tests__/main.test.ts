@@ -17,4 +17,7 @@ describe("main test", () => {
   test("test5: empty object ", () => {
     expect(transfer(data.transferJson_5, "Eobj")).toEqual(data.transferType_5);
   });
+  test("test6: complex array ", () => {
+    expect(transfer(data.transferJson_6)).toEqual(data.transferType_6);
+  });
 });

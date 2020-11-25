@@ -25,13 +25,13 @@ export const transferJson_2 = JSON.stringify({
   },
 });
 
-export const transferType_2 = `/* TsModelDataUserInfo */
-export interface TsModelDataUserInfo{
+export const transferType_2 = `/* TsModelDataGoodsList */
+export interface TsModelDataGoodsList{
   id?: string
 }
 
-/* TsModelDataGoodsList */
-export interface TsModelDataGoodsList{
+/* TsModelDataUserInfo */
+export interface TsModelDataUserInfo{
   id?: string
 }
 
@@ -155,5 +155,50 @@ export interface EobjData{
 /* Eobj */
 export interface Eobj{
   data?: EobjData
+}
+`;
+
+export const transferJson_6 = JSON.stringify({
+  data: {
+    list: [
+      {
+        id: 1,
+        info: [
+          {
+            name: "Sam",
+          },
+        ],
+      },
+      {
+        id: 2,
+        info: [
+          {
+            name: "Sam",
+          },
+        ],
+      },
+    ],
+  },
+});
+
+export const transferType_6 = `/* TsModelDataListInfo */
+export interface TsModelDataListInfo{
+  name?: string
+}
+
+/* TsModelDataList */
+export interface TsModelDataList{
+  id?: number
+  info?: TsModelDataListInfo[]
+}
+
+/* TsModelData */
+export interface TsModelData{
+  list?: TsModelDataList[]
+}
+
+/* TsModel */
+export interface TsModel{
+  data?: TsModelData
 }
 `;
