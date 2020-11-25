@@ -14,4 +14,7 @@ describe("main test", () => {
   test("test4: level2 ", () => {
     expect(transfer(data.transferJson_4)).toEqual(data.transferType_4);
   });
+  test("test5: empty object ", () => {
+    expect(transfer(data.transferJson_5, "Eobj")).toEqual(data.transferType_5);
+  });
 });

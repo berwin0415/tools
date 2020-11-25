@@ -143,3 +143,17 @@ export interface TsModel{
   data?: TsModelData[]
 }
 `;
+
+export const transferJson_5 = JSON.stringify({
+  data: {},
+});
+
+export const transferType_5 = `/* EobjData */
+export interface EobjData{
+}
+
+/* Eobj */
+export interface Eobj{
+  data?: EobjData
+}
+`;

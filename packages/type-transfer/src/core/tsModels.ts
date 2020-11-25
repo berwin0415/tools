@@ -82,15 +82,16 @@ export const createModelList = (tree: ModelNode) => {
   const list: ModelList = [];
   const root = { ...tree, path: [] };
   const queue: ModelQueueNode[] = [root];
+  // console.log(JSON.stringify(queue))
   while (queue.length) {
     const node = queue.shift();
-    console.log(list);
+    // console.log(JSON.stringify(list, null, 4));
     if (node?.type === "tsModel") {
       node.children?.forEach((child) => {
         const path = [...node.path, node.name];
         queue.push({ ...child, path });
       });
-      if (node.children && node.children.length) {
+      if (node.children) {
         list.unshift({
           name: node.name,
           type: node.type,
@@ -125,7 +126,6 @@ export const createModelList = (tree: ModelNode) => {
       });
     }
   }
-
   return list;
 };
 

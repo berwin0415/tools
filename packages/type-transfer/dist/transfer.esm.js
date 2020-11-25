@@ -104,13 +104,13 @@ var createModelList = function (tree) {
     var queue = [root];
     var _loop_1 = function () {
         var node = queue.shift();
-        console.log(list);
+        // console.log(JSON.stringify(list, null, 4));
         if ((node === null || node === void 0 ? void 0 : node.type) === "tsModel") {
             (_a = node.children) === null || _a === void 0 ? void 0 : _a.forEach(function (child) {
                 var path = __spreadArrays(node.path, [node.name]);
                 queue.push(__assign(__assign({}, child), { path: path }));
             });
-            if (node.children && node.children.length) {
+            if (node.children) {
                 list.unshift({
                     name: node.name,
                     type: node.type,
@@ -145,6 +145,7 @@ var createModelList = function (tree) {
             });
         }
     };
+    // console.log(JSON.stringify(queue))
     while (queue.length) {
         _loop_1();
     }
